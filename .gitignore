@@ -1,0 +1,5 @@
+build/
+.pio/
+*.o
+*.bin
+*.elf
