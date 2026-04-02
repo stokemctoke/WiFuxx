@@ -1,4 +1,4 @@
-# 🔥 WiFuxx      — ESP32-C5 Autonomous Dual-Band Deauther
+# 🔥 WiFuxx - ESP32-C5 Autonomous Dual-Band Deauther
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform: ESP32-C5](https://img.shields.io/badge/Platform-ESP32--C5-blue)](https://www.espressif.com/en/products/socs/esp32-c5)
@@ -40,12 +40,12 @@
 
 ## 🛠️ Hardware Required
 
-| Component | Quantity | Notes |
-| --- | --- | --- |
-| XIAO ESP32-C5 | 1   | Main controller |
-| 0.96" OLED Display (I2C) | 1   | 128×64, SSD1306 driver |
-| Breadboard & Jumper Wires | —   | For prototyping |
-| USB-C Cable | 1   | Power and programming |
+| Component                 | Quantity | Notes                  |
+| ------------------------- | -------- | ---------------------- |
+| XIAO ESP32-C5             | 1        | Main controller        |
+| 0.96" OLED Display (I2C)  | 1        | 128×64, SSD1306 driver |
+| Breadboard & Jumper Wires | —        | For prototyping        |
+| USB-C Cable               | 1        | Power and programming  |
 
 ---
 
@@ -70,12 +70,12 @@ XIAO ESP32-C5          OLED Display
 
 **Pin Mapping Reference:**
 
-| XIAO Pin | GPIO | OLED Connection |
-| --- | --- | --- |
-| D4 (SDA) | GPIO23 | SDA (Data) |
-| D5 (SCL) | GPIO24 | SCL (Clock) |
-| 3V3 | —   | VCC (Power) |
-| GND | —   | Ground |
+| XIAO Pin | GPIO   | OLED Connection |
+| -------- | ------ | --------------- |
+| D4 (SDA) | GPIO23 | SDA (Data)      |
+| D5 (SCL) | GPIO24 | SCL (Clock)     |
+| 3V3      | —      | VCC (Power)     |
+| GND      | —      | Ground          |
 
 > **Note:** Both the XIAO ESP32-C5 and most 0.96" SSD1306 OLED modules include onboard LDO (Low Drop-Out) voltage regulators, so either 3.3V or 5V can be used to power the OLED. This project runs the OLED at 5V without issue. On standard modules, the I2C signal lines (SDA/SCL) are pulled up to the regulated 3.3V rail internally, keeping them safe for the ESP32-C5's 3.3V GPIO regardless of supply voltage. Verify this is the case for your specific module before powering at 5V.
 
@@ -134,28 +134,10 @@ rm libnet80211.a
 cp ~/Github-Repos/WiFuxx/patched_libnet/libnet80211.a .
 ```
 
-Return to the ESP-IDF root:
-
-```bash
-cd ~/Github-Repos/esp-idf
-```
-
-### Step 4: Configure the Project
+### Step 4: Build and Flash
 
 ```bash
 cd ~/Github-Repos/WiFuxx
-idf.py set-target esp32c5
-idf.py menuconfig
-```
-
-In `menuconfig`, verify:
-
-- **Component config → Wi-Fi → WiFi enable** is checked
-- **Component config → I2C → I2C enable** is checked
-
-### Step 5: Build and Flash
-
-```bash
 idf.py build
 idf.py -p /dev/ttyUSB0 flash monitor
 ```
@@ -176,10 +158,10 @@ IDLE (30s) → SCAN (5–10s) → ATTACK (300s) → IDLE → (repeat)
 
 **Display status during each phase:**
 
-| Phase | Display |
-| --- | --- |
-| IDLE | Waiting for next scan cycle |
-| SCAN | Scanning for networks, counting strong APs |
+| Phase  | Display                                                 |
+| ------ | ------------------------------------------------------- |
+| IDLE   | Waiting for next scan cycle                             |
+| SCAN   | Scanning for networks, counting strong APs              |
 | ATTACK | Actively deauthenticating targets (shows packet counts) |
 
 ### OLED Display Layout
@@ -234,12 +216,12 @@ I (5683) WiFuxx: 💥 [5/300 sec] Total: 12450 pkt | PPS: 2490 | Targets: 7
 
 ## 🔧 Troubleshooting
 
-| Problem | Solution |
-| --- | --- |
-| OLED display blank | Check wiring, especially SDA/SCL. Run an I2C scanner sketch to verify address. |
-| No deauth effect | Verify promiscuous mode is enabled — check serial for `"Failed to enable promiscuous mode"`. |
-| Device not scanning | Ensure Wi-Fi is initialised correctly — serial logs will show errors. |
-| Compilation errors | Run `idf.py clean` and rebuild. Ensure ESP-IDF is v5.0+. |
+| Problem             | Solution                                                                                     |
+| ------------------- | -------------------------------------------------------------------------------------------- |
+| OLED display blank  | Check wiring, especially SDA/SCL. Run an I2C scanner sketch to verify address.               |
+| No deauth effect    | Verify promiscuous mode is enabled — check serial for `"Failed to enable promiscuous mode"`. |
+| Device not scanning | Ensure Wi-Fi is initialised correctly — serial logs will show errors.                        |
+| Compilation errors  | Run `idf.py clean` and rebuild. Ensure ESP-IDF is v5.0+.                                     |
 
 ---
 
@@ -259,12 +241,12 @@ This initialises all hardware but never scans or attacks — useful for verifyin
 
 ## 📈 Performance
 
-| Metric | Value |
-| --- | --- |
-| Packet rate | ~2,500 packets/second (aggregate across all targets) |
-| Attack latency | < 1 ms between channel switches |
-| Display update rate | 1 Hz (negligible CPU impact) |
-| Memory usage | ~50 KB heap, ~500 KB flash |
+| Metric              | Value                                                |
+| ------------------- | ---------------------------------------------------- |
+| Packet rate         | ~2,500 packets/second (aggregate across all targets) |
+| Attack latency      | < 1 ms between channel switches                      |
+| Display update rate | 1 Hz (negligible CPU impact)                         |
+| Memory usage        | ~50 KB heap, ~500 KB flash                           |
 
 ---
 
