@@ -1,4 +1,4 @@
-// main.c - Stokes WiFuxx v1.1 - ESP32-C5 Dual-Band Deauther
+// main.c - Stokes WiFuxx - ESP32-C5 Dual-Band Deauther
 // Features: Autonomous dualband deauth, OLED display (low overhead)
 
 #include <stdio.h>
@@ -332,7 +332,7 @@ static void attack_channel(uint8_t channel, target_list_t *list) {
 static void multi_target_attack_task(void *pvParameters) {
     log_to_all("");
     log_to_all("╔════════════════════════════════════════╗");
-    log_to_all("║      Stokes WiFuxx v1.1 ACTIVE        ║");
+    log_to_all("║         Stokes WiFuxx ACTIVE          ║");
     log_to_all("╚════════════════════════════════════════╝");
 
     log_to_all("🎯 Attacking %d targets:", auto_targets.count);
@@ -408,7 +408,7 @@ static void multi_target_attack_task(void *pvParameters) {
                 attack_target_t *t = &auto_targets.targets[i];
                 float pps = (float)t->packets_sent / (float)(elapsed > 0 ? elapsed : 1);
                 const char *band = (t->channel <= 14) ? "2.4G" : "5G";
-                log_to_all("   📻 %s: %s - %6lu pkt (%4.0f pps)",
+                log_to_all("   💀 %s: %s - %6lu pkt (%4.0f pps)",
                          band, t->ssid, t->packets_sent, pps);
             }
             log_to_all("");
@@ -438,7 +438,7 @@ static void multi_target_attack_task(void *pvParameters) {
         attack_target_t *t = &auto_targets.targets[i];
         float pps = (float)t->packets_sent / (float)total_time;
         const char *band = (t->channel <= 14) ? "2.4GHz" : "5GHz";
-        log_to_all("   📻 %s (%s): %lu packets (%.0f pps)", t->ssid, band, t->packets_sent, pps);
+        log_to_all("   💀 %s (%s): %lu packets (%.0f pps)", t->ssid, band, t->packets_sent, pps);
     }
 
     attack_running = false;
@@ -656,7 +656,7 @@ static void wifi_init_sta(void) {
 
     log_to_all("");
     log_to_all("╔════════════════════════════════════════╗");
-    log_to_all("║      Stokes WiFuxx v1.1               ║");
+    log_to_all("║          Stokes WiFuxx                ║");
     log_to_all("║     Dual-Band Autonomous Deauther     ║");
     log_to_all("╚════════════════════════════════════════╝");
     log_to_all("📡 Wi-Fi in STA mode with promiscuous");
