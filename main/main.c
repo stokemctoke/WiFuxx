@@ -595,7 +595,7 @@ static void display_task(void *pvParameters) {
         }
 
         // Row 0: title
-        oled_draw_string(0, 0, "WiFuxx v1.1");
+        oled_draw_string(0, 0, "> Stokes WiFuxx");
 
         // Row 1: AP count
         snprintf(line_buffer, sizeof(line_buffer), "APs: %d", info.ap_count);
