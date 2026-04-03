@@ -332,7 +332,7 @@ static void attack_channel(uint8_t channel, target_list_t *list) {
 static void multi_target_attack_task(void *pvParameters) {
     log_to_all("");
     log_to_all("╔════════════════════════════════════════╗");
-    log_to_all("║         Stokes WiFuxx ACTIVE          ║");
+    log_to_all("║          Stokes WiFuxx ACTIVE          ║");
     log_to_all("╚════════════════════════════════════════╝");
 
     log_to_all("🎯 Attacking %d targets:", auto_targets.count);
@@ -419,7 +419,7 @@ static void multi_target_attack_task(void *pvParameters) {
 
     log_to_all("");
     log_to_all("╔════════════════════════════════════════╗");
-    log_to_all("║         ATTACK COMPLETED               ║");
+    log_to_all("║            ATTACK COMPLETED            ║");
     log_to_all("╚════════════════════════════════════════╝");
 
     uint32_t total_time = get_time_sec() - attack_start_time;
@@ -545,7 +545,7 @@ static uint16_t scan_and_filter_targets(void) {
 static void autonomous_mode_task(void *pvParameters) {
     log_to_all("");
     log_to_all("╔════════════════════════════════════════╗");
-    log_to_all("║      AUTONOMOUS MODE ACTIVATED        ║");
+    log_to_all("║        AUTONOMOUS MODE ACTIVATED       ║");
     log_to_all("╚════════════════════════════════════════╝");
     log_to_all("📊 Signal threshold: > %d dBm", BAD_SIGNAL_THRESHOLD);
     log_to_all("🎯 Max targets: %d", MAX_TARGETS);
@@ -656,8 +656,8 @@ static void wifi_init_sta(void) {
 
     log_to_all("");
     log_to_all("╔════════════════════════════════════════╗");
-    log_to_all("║          Stokes WiFuxx                ║");
-    log_to_all("║     Dual-Band Autonomous Deauther     ║");
+    log_to_all("║             Stokes WiFuxx              ║");
+    log_to_all("║     Dual-Band Autonomous Deauther      ║");
     log_to_all("╚════════════════════════════════════════╝");
     log_to_all("📡 Wi-Fi in STA mode with promiscuous");
     log_to_all("⚡ Mode: AUTONOMOUS (threshold > %d dBm)", BAD_SIGNAL_THRESHOLD);
