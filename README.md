@@ -1,4 +1,4 @@
-# WiFuxx - ESP32-C5 Autonomous Dual-Band Deauther
+# WiFuxx - ESP32-C5 Autonomous Dual-Band Deauth
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Platform: ESP32-C5](https://img.shields.io/badge/Platform-ESP32--C5-blue)](https://www.espressif.com/en/products/socs/esp32-c5)
