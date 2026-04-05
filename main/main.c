@@ -172,28 +172,28 @@ static void oled_clear_screen(void) {
 static void oled_display_text_intro(void) {
     oled_clear_screen();
     
-    // Line 0:
-    oled_draw_string(0, 0, ">> STOKES WIFUXX");
+    // Line 0: Title (">> STOKES WIFUXX" = 16 chars - fits perfectly)
+    oled_draw_string(0, 0, ">>STOKES WIFUXX");
     
-    // Line 1:
+    // Line 1: ("Dual-Band Deauth" = 16 chars)
     oled_draw_string(0, 1, "Dual-Band Deauth");
     
-    // Line 2:
-    oled_draw_string(0, 2, "2.4G + 5G Auto");
+    // Line 2: ("2.4G+5G Auto" = 12 chars - remove spaces)
+    oled_draw_string(0, 2, "2.4G+5G Auto");
     
-        // Line 3: Attack duration (fits: "Atk:150s" = 9 chars)
-    char line5[17];
-    snprintf(line5, sizeof(line5), "Atk:%ds", AUTO_ATTACK_DURATION_SEC);
-    oled_draw_string(0, 5, line5);
+    // Line 3: Attack duration
+    char line3[17];
+    snprintf(line3, sizeof(line3), "Atk:%ds", AUTO_ATTACK_DURATION_SEC);
+    oled_draw_string(0, 3, line3);
     
-    // Line 4:
-    oled_draw_string(0, 6, "SOMETIMES YOU");
-
-    // Line 5:
-    oled_draw_string(0, 6, "JUST GOTTA GO AN");
-  
-    // Line 6:
-    oled_draw_string(0, 6, "SPREAD THE CHAOS");
+    // Line 4: First part of message
+    oled_draw_string(0, 4, "SOMETIMES YOU");
+    
+    // Line 5: Second part
+    oled_draw_string(0, 5, "GOTTA GO AN");
+    
+    // Line 6: Third part
+    oled_draw_string(0, 6, "SPREAD CHAOS");
     
     vTaskDelay(pdMS_TO_TICKS(5000));
     oled_clear_screen();
