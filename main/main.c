@@ -172,32 +172,28 @@ static void oled_clear_screen(void) {
 static void oled_display_text_intro(void) {
     oled_clear_screen();
     
-    // Line 0: Title (fits: ">> Stokes WiFuxx" = 16 chars)
-    oled_draw_string(0, 0, "Stokes WiFuxx");
+    // Line 0:
+    oled_draw_string(0, 0, ">> STOKES WIFUXX");
     
-    // Line 1: Version (fits: "Dual-Band Deauth" = 16 chars)
+    // Line 1:
     oled_draw_string(0, 1, "Dual-Band Deauth");
     
-    // Line 2: Features (fits: "2.4G+5G Auto" = 12 chars)
-    oled_draw_string(0, 2, "2.4G+5G Auto");
+    // Line 2:
+    oled_draw_string(0, 2, "2.4G + 5G Auto");
     
-    // Line 3: 2.4GHz threshold (fits: "2G:-75dBm" = 10 chars)
-    char line3[17];
-    snprintf(line3, sizeof(line3), "2G:%ddBm", BAD_SIGNAL_THRESHOLD_24);
-    oled_draw_string(0, 3, line3);
-    
-    // Line 4: 5GHz threshold (fits: "5G:-70dBm" = 10 chars)
-    char line4[17];
-    snprintf(line4, sizeof(line4), "5G:%ddBm", BAD_SIGNAL_THRESHOLD_5);
-    oled_draw_string(0, 4, line4);
-    
-    // Line 5: Attack duration (fits: "Atk:150s" = 9 chars)
+        // Line 3: Attack duration (fits: "Atk:150s" = 9 chars)
     char line5[17];
     snprintf(line5, sizeof(line5), "Atk:%ds", AUTO_ATTACK_DURATION_SEC);
     oled_draw_string(0, 5, line5);
     
-    // Line 6: Warning (fits: "OWN NET ONLY!" = 14 chars)
-    oled_draw_string(0, 6, "FUXX IT UP!");
+    // Line 4:
+    oled_draw_string(0, 6, "SOMETIMES YOU...");
+
+    // Line 5:
+    oled_draw_string(0, 6, "JUST GOTTA GO AN");
+  
+    // Line 6:
+    oled_draw_string(0, 6, "SPREAD THE CHAOS");
     
     vTaskDelay(pdMS_TO_TICKS(5000));
     oled_clear_screen();
