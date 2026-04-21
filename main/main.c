@@ -270,9 +270,9 @@ static void oled_display_text_intro(void) {
 
     oled_draw_string(0, 3, "Atk: NON-STOP");
 
-    oled_draw_string(0, 4, "SOMETIMES YOU");
-    oled_draw_string(0, 5, "GOTTA GO AN");
-    oled_draw_string(0, 6, "SPREAD CHAOS");
+    oled_draw_string(0, 4, "ONLY FOR USE");
+    oled_draw_string(0, 5, "ON YOUR OWN");
+    oled_draw_string(0, 6, "NETWORKS :P");
     oled_flush();
     vTaskDelay(pdMS_TO_TICKS(5000));
     oled_clear_screen();
