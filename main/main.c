@@ -1,4 +1,4 @@
-// main.c - WiFuxx C5 - Claude Optimised Edition
+// main.c - WiFuxx C5 - Optimised Edition
 // Dual-band deauth for ESP32-C5 with SSD1306 OLED
 //
 // Improvements over original:
@@ -377,7 +377,7 @@ static void attack_band(target_list_t *list, uint8_t burst_size, bool is_5ghz) {
 // ==================== Attack Task ====================
 static void multi_band_attack_task(void *pvParameters) {
     ESP_LOGI(TAG, "╔════════════════════════════════════════╗");
-    ESP_LOGI(TAG, "║        STOKES WIFUXX OPTIMISED         ║");
+    ESP_LOGI(TAG, "║          PRO DEAUTH PEN TEST           ║");
     ESP_LOGI(TAG, "║        DUAL-BAND ATTACK ACTIVE         ║");
     ESP_LOGI(TAG, "╚════════════════════════════════════════╝");
 
@@ -623,7 +623,7 @@ static uint16_t scan_and_filter_targets(void) {
 // ==================== Autonomous Mode Task ====================
 static void autonomous_mode_task(void *pvParameters) {
     ESP_LOGI(TAG, "╔════════════════════════════════════════╗");
-    ESP_LOGI(TAG, "║        STOKES WIFUXX OPTIMISED         ║");
+    ESP_LOGI(TAG, "║          PRO DEAUTH PEN TEST           ║");
     ESP_LOGI(TAG, "║        AUTONOMOUS MODE ACTIVE          ║");
     ESP_LOGI(TAG, "╚════════════════════════════════════════╝");
     ESP_LOGI(TAG, "2.4GHz threshold : > %d dBm", BAD_SIGNAL_THRESHOLD_24);
@@ -719,7 +719,7 @@ static void wifi_init_sta(void) {
         ESP_LOGE(TAG, "Failed to enable promiscuous mode: %s", esp_err_to_name(ret));
 
     ESP_LOGI(TAG, "╔════════════════════════════════════════╗");
-    ESP_LOGI(TAG, "║             STOKES WIFUXX              ║");
+    ESP_LOGI(TAG, "║          PRO DEAUTH PEN TEST           ║");
     ESP_LOGI(TAG, "║      OPTIMISED DUAL-BAND DEAUTHER      ║");
     ESP_LOGI(TAG, "╚════════════════════════════════════════╝");
     ESP_LOGI(TAG, "Wi-Fi STA + promiscuous enabled");
