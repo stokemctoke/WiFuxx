@@ -1,4 +1,4 @@
-// main.c - WiFuxx C5 - Infinite Attack Edition
+// main.c - WiFuxx C5 Dualband Deauthentication Tool - Infinite Attack Edition
 // Dual-band deauth for ESP32-C5 with SSD1306 OLED
 // Scans on boot, attacks all targets above threshold indefinitely.
 
@@ -264,7 +264,7 @@ static void oled_draw_string(uint8_t x, uint8_t page, const char *str) {
 
 static void oled_display_text_intro(void) {
     oled_clear_screen();
-    oled_draw_string(0, 0, ">>STOKES WIFUXX");
+    oled_draw_string(0, 0, ">> PRO DEAUTHER");
     oled_draw_string(0, 1, "Dual-Band Deauth");
     oled_draw_string(0, 2, "2.4G+5G Auto");
 
@@ -647,7 +647,7 @@ static void display_task(void *pvParameters) {
         }
 
         oled_clear_page(0);
-        oled_draw_string(0, 0, "Stokes WiFuxx");
+        oled_draw_string(0, 0, ">> PRO DEAUTHER");
 
         oled_clear_page(1);
         snprintf(line_buf, sizeof(line_buf), "2.4G:%d 5G:%d", info.ap_count_24, info.ap_count_5);
