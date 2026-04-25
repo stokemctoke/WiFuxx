@@ -279,4 +279,4 @@ MIT Licence — see the [LICENSE](LICENSE) file for details.
 
 ---
 
->> ***WiFuxx:** Because sometimes you just need to fuxx about (with your own network* 😉 *)*
+>> ***WiFuxx:** Because sometimes you just need to fuxx about (with your own network)* 😉
